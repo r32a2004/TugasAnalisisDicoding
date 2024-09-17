@@ -19,7 +19,7 @@ start_date = pd.to_datetime(start_date)
 end_date = pd.to_datetime(end_date)
 
 # Load data
-data = pd.read_csv('data_bersih.csv')
+data = pd.read_csv('data.csv')
 
 # Convert month names to numeric values if needed
 month_mapping = {
