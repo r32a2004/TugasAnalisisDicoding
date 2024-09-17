@@ -43,17 +43,17 @@ data_baik = filtered_data[filtered_data['Kualitas_Udara'] == 1]
 ordered_months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 
                   'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember']
 
-# Add month names to the data_baik DataFrame
-data_baik['month_name'] = pd.Categorical(data_baik['date'].dt.month_name(locale='id_ID'), 
-                                         categories=ordered_months, 
-                                         ordered=True)
+# Mapping manual month names
+data_baik['month_name'] = data_baik['date'].dt.month_name().map({
+    'January': 'Januari', 'February': 'Februari', 'March': 'Maret', 'April': 'April',
+    'May': 'Mei', 'June': 'Juni', 'July': 'Juli', 'August': 'Agustus',
+    'September': 'September', 'October': 'Oktober', 'November': 'November', 'December': 'Desember'
+})
 
 # Count the number of observations per month, ensuring all months are included
 monthly_counts = data_baik['month_name'].value_counts().reindex(ordered_months, fill_value=0)
 
-# Plot the line chart based on months
-
-data_baik = data[data['Kualitas_Udara'] == 1]
+# Plot the bar chart for temperature categories
 temperatur_counts = data_baik['TEMP_Category'].value_counts()
 
 plt.figure(figsize=(10, 6))
@@ -63,32 +63,29 @@ plt.xlabel('Kategori Temperatur')
 plt.ylabel('Jumlah Observasi')
 plt.xticks(rotation=45)
 plt.grid(axis='y', linestyle='--', alpha=0.7)
-plt.show()
 
 # Display the plot in Streamlit
 st.pyplot(plt)
+plt.clf()  # Clear the plot to avoid overlap
 
-
-
-
-
+# Plot the line chart based on months
 plt.figure(figsize=(12, 6))
 plt.plot(monthly_counts.index, monthly_counts.values, marker='o', color='skyblue', linestyle='-')
 plt.title('Jumlah Observasi per Bulan dengan Kualitas Data Baik')
 plt.xlabel('Bulan')
 plt.ylabel('Jumlah Observasi')
 plt.grid(True, linestyle='--', alpha=0.7)
-
-# Rotate x-axis labels for better readability
 plt.xticks(rotation=45)
 
 # Display the plot in Streamlit
 st.pyplot(plt)
+plt.clf()  # Clear the plot to avoid overlap
 
-
+# Correlation heatmap
 corr_matrix = data.corr(numeric_only=True)
 
 plt.figure(figsize=(10, 8))
 sns.heatmap(corr_matrix[['Kualitas_Udara']], annot=True, cmap='coolwarm', fmt='.2f', vmin=-1, vmax=1)
 plt.title('Heatmap Korelasi Kualitas Udara dengan Variabel Lainnya')
 st.pyplot(plt)
+plt.clf()  # Clear the plot to avoid overlap
